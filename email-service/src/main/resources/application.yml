@@ -1,0 +1,33 @@
+spring:
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: abdyrazakovatai@gmail.com
+    password: ypys kjrx bpie qyxw
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/email-db
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: email-service-v2
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+server:
+  port: 2121
