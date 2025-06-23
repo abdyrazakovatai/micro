@@ -1,6 +1,6 @@
 package dev.emailservice.config;
 
-import dev.emailservice.model.User;
+import dev.emailservice.model.EmailNotification;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -21,7 +21,7 @@ import java.util.Map;
 public class KafkaConfig {
 
     @Bean
-    public ProducerFactory<String, User> producerFactory() {
+    public ProducerFactory<String, EmailNotification> producerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -31,13 +31,13 @@ public class KafkaConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, User> kafkaTemplate() {
+    public KafkaTemplate<String, EmailNotification> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
     @Bean
-    public ConsumerFactory<String, User> consumerFactory() {
-        JsonDeserializer<User> deserializer = new JsonDeserializer<>(User.class);
+    public ConsumerFactory<String, EmailNotification> consumerFactory() {
+        JsonDeserializer<EmailNotification> deserializer = new JsonDeserializer<>(EmailNotification.class);
         deserializer.setRemoveTypeHeaders(true);
         deserializer.setUseTypeMapperForKey(true);
         deserializer.addTrustedPackages("*");
@@ -55,8 +55,8 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, User> userKafkaListenerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, User> factory =
+    public ConcurrentKafkaListenerContainerFactory<String, EmailNotification> userKafkaListenerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, EmailNotification> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
