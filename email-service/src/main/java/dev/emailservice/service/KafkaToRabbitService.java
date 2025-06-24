@@ -1,6 +1,5 @@
 package dev.emailservice.service;
 
-import dev.emailservice.config.RabbitConfig;
 import dev.emailservice.model.EmailNotification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -19,14 +18,11 @@ public class KafkaToRabbitService {
             containerFactory = "userKafkaListenerFactory"
     )
     public void consumeUser(EmailNotification user) {
-        System.out.println("📥 Получено из Kafka: " + user);
-        rabbitTemplate.convertAndSend(RabbitConfig.EMAIL_QUEUE, "Пользователь: " + user.getMassage());
-        System.out.println("📤 Отправлено в RabbitMQ");
 
         emailSender.sendEmail(
                 user.getEmail(),
-                "Hello " + user.getMassage(),
-                "Welcome " + user.getEmail()
+                "Hello " + user.getEmail(),
+                "Welcome to our application" + user.getEmail()
         );
 
     }

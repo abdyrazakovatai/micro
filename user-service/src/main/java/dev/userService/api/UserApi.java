@@ -1,22 +1,21 @@
 package dev.userService.api;
 
-import dev.commonlib.dto.UserEvent;
+import dev.commonlib.dto.AuthRequest;
+import dev.commonlib.event.EmailNotification;
 import dev.userService.model.User;
 import dev.userService.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import dev.commonlib.dto.AuthRequest;
 
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UserApi {
-    final KafkaTemplate<String, UserEvent> kafkaTemplate;
+    final KafkaTemplate<String, Object> kafkaTemplate;
     final UserService userService;
 
     @PostMapping("/sign-up")
@@ -24,11 +23,12 @@ public class UserApi {
 
         User registeredUser = userService.register(user);
 
-        UserEvent event = new UserEvent();
-        event.setUserId(registeredUser.getId());
-        event.setEmail(registeredUser.getEmail());
+        EmailNotification notification = new EmailNotification();
+        notification.setEmail(registeredUser.getEmail());
+        notification.setMassage("Добро пожаловать в наш сервис!\"");
+        notification.setSubject("Регистрация прошла успешно!\"");
 
-        kafkaTemplate.send("user-topic", event);
+        kafkaTemplate.send("user-topic", notification);
         return "Пользователь отправлен в Kafka!";
     }
 
